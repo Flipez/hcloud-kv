@@ -3,6 +3,8 @@ Implements a simple key/value store by utilizing the ssh-key resource and its la
 As per API spec it supports keys and values with a max lenght of 63 chars.
 hetzner-kv supports multiple "databases" provided by a flag.
 
+It uses the token specified via env variable `HCLOUD_TOKEN`
+
 This tool is a PoC only, do not use for anything.
 
 ```

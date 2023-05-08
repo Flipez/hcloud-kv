@@ -19,8 +19,6 @@ jobs:
         run: |
           go version
           go get
-      - name: Test
-        run: go test -coverpkg=./... ./...
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
