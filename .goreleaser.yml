@@ -1,6 +1,5 @@
 build:
   binary: hcloud-kv
-  main: main.go
   ldflags:
     - >
       -s -w
