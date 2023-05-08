@@ -12,6 +12,8 @@ import (
 )
 
 func main() {
+	log.SetFlags(0)
+
 	app := &cli.App{
 		Name:  "hcloud-kv",
 		Usage: "hetzner cloud key/value store",
@@ -32,7 +34,15 @@ func main() {
 				Usage:   "sets a key",
 				Action: func(cCtx *cli.Context) error {
 					database := setupDB(cCtx.String("db"))
-					database.Set(cCtx.Args().First(), cCtx.Args().Get(1))
+
+					key := cCtx.Args().First()
+					val := cCtx.Args().Get(1)
+
+					if len(key) > 63 || len(val) > 63 {
+						log.Fatalf("error updating key: max len for key and value is 63")
+					}
+
+					database.Set(key, val)
 					return nil
 				},
 			},
