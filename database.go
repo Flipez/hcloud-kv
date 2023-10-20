@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 
 	"github.com/hetznercloud/hcloud-go/hcloud"
@@ -13,6 +14,7 @@ type Database struct {
 	Client  *hcloud.Client
 	Context context.Context
 	Self    *hcloud.SSHKey
+	NoInfo  bool
 }
 
 func (d *Database) Init() {
@@ -42,6 +44,8 @@ func (d *Database) Fetch() *hcloud.SSHKey {
 		log.Fatalf("database %s not found", d.Name)
 	}
 
+	checkSize(d)
+
 	return d.Self
 }
 
@@ -56,6 +60,9 @@ func (d *Database) Set(key, value string) bool {
 	}
 
 	d.Store = database.Labels
+
+	log.Println("OK")
+	checkSize(d)
 
 	return true
 }
@@ -78,3 +85,11 @@ func (d *Database) List() []string {
 
 	return keys
 }
+
+func checkSize(db *Database) {
+	if !db.NoInfo {
+		jsonStr, _ := json.Marshal(db.Store)
+		log.Printf("[Info] Database usage: %.2f%%", float64(len(jsonStr))/float64(maxDBBytes)*100)
+	}
+}
+

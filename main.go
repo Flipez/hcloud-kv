@@ -11,6 +11,10 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+var (
+	maxDBBytes = 1946
+)
+
 func main() {
 	log.SetFlags(0)
 
@@ -23,7 +27,7 @@ func main() {
 				Aliases: []string{"i"},
 				Usage:   "initializes a new database",
 				Action: func(cCtx *cli.Context) error {
-					database := setupDB(cCtx.String("db"))
+					database := setupDB(cCtx)
 					database.Init()
 					return nil
 				},
@@ -33,7 +37,7 @@ func main() {
 				Aliases: []string{"s"},
 				Usage:   "sets a key",
 				Action: func(cCtx *cli.Context) error {
-					database := setupDB(cCtx.String("db"))
+					database := setupDB(cCtx)
 
 					key := cCtx.Args().First()
 					val := cCtx.Args().Get(1)
@@ -51,7 +55,7 @@ func main() {
 				Aliases: []string{"g"},
 				Usage:   "get a value from given key",
 				Action: func(cCtx *cli.Context) error {
-					database := setupDB(cCtx.String("db"))
+					database := setupDB(cCtx)
 					fmt.Println(database.Get(cCtx.Args().First()))
 					return nil
 				},
@@ -61,7 +65,7 @@ func main() {
 				Aliases: []string{"l"},
 				Usage:   "list all keys",
 				Action: func(cCtx *cli.Context) error {
-					database := setupDB(cCtx.String("db"))
+					database := setupDB(cCtx)
 					keys := database.List()
 					fmt.Println(strings.Join(keys, "\n"))
 					return nil
@@ -74,6 +78,11 @@ func main() {
 				Value: "0",
 				Usage: "database to use",
 			},
+			&cli.BoolFlag{
+				Name:  "no-info",
+				Value: false,
+				Usage: "Do not print db usage information",
+			},
 		},
 	}
 
@@ -83,12 +92,15 @@ func main() {
 
 }
 
-func setupDB(name string) Database {
+func setupDB(ctx *cli.Context) Database {
 	token := os.Getenv("HCLOUD_TOKEN")
+	name := ctx.String("db")
+	noInfo := ctx.Bool("no-info")
 
 	return Database{
 		Client:  hcloud.NewClient(hcloud.WithToken(token)),
 		Context: context.Background(),
 		Name:    fmt.Sprintf("hkv-%s", name),
+		NoInfo:  noInfo,
 	}
 }
