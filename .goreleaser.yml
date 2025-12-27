@@ -1,20 +1,20 @@
 version: 2
-build:
-  binary: hcloud-kv
-  ldflags:
-    - >
-      -s -w
-  goos:
-    - linux
-    - darwin
-    - freebsd
-    - windows
-  goarch:
-    - amd64
-    - arm
-    - arm64
-  env:
-    - CGO_ENABLED=0
+builds:
+  - binary: hcloud-kv
+    ldflags:
+      - >
+        -s -w
+    goos:
+      - linux
+      - darwin
+      - freebsd
+      - windows
+    goarch:
+      - amd64
+      - arm
+      - arm64
+    env:
+      - CGO_ENABLED=0
 
 archives:
   - name_template: "{{.Binary}}_{{.Os}}_{{.Arch}}_{{.Tag}}"
@@ -23,7 +23,7 @@ release:
   draft: true
 
 snapshot:
-  name_template: "{{.Tag}}"
+  version_template: "{{.Tag}}"
 
 checksum:
   name_template: "checksums.txt"
