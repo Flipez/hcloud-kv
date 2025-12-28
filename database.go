@@ -105,6 +105,57 @@ func (d *Database) List() []string {
 	return keys
 }
 
+func (d *Database) Delete(key string) bool {
+	d.Fetch()
+
+	if _, exists := d.Store[key]; !exists {
+		log.Printf("Key '%s' not found, nothing to delete.", key)
+		return false
+	}
+
+	delete(d.Store, key)
+
+	firewallRules, encodedLength, err := mapToRules(d.Store)
+	if err != nil {
+		log.Fatalf("Error encoding data after delete: %s", err)
+	}
+
+	_, _, err = d.Client.Firewall.SetRules(d.Context, d.Self, hcloud.FirewallSetRulesOpts{
+		Rules: firewallRules,
+	})
+
+	if err != nil {
+		log.Fatalf("error updating db during delete: %s\n", err)
+	}
+
+	d.LastEncodedSize = encodedLength
+	log.Println("Deleted key:", key)
+	checkSize(d, encodedLength)
+
+	return true
+}
+
+func (d *Database) Clear() {
+	d.Fetch()
+
+	if d.Self == nil {
+		log.Fatal("Could not clear database: Firewall not found or not initialized.")
+	}
+
+	d.Store = make(map[string]string)
+
+	_, _, err := d.Client.Firewall.SetRules(d.Context, d.Self, hcloud.FirewallSetRulesOpts{
+		Rules: []hcloud.FirewallRule{},
+	})
+
+	if err != nil {
+		log.Fatalf("Failed to clear database: %s", err)
+	}
+
+	d.LastEncodedSize = 0
+	log.Println("Database cleared successfully.")
+}
+
 func checkSize(db *Database, currentLength int) {
 	if db.NoInfo {
 		return

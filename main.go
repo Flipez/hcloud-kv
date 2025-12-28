@@ -71,6 +71,26 @@ func main() {
 					return nil
 				},
 			},
+			{
+				Name:    "delete",
+				Aliases: []string{"d"},
+				Usage:   "delete a given key",
+				Action: func(cCtx *cli.Context) error {
+					database := setupDB(cCtx)
+					database.Delete(cCtx.Args().First())
+					return nil
+				},
+			},
+			{
+				Name:    "clear",
+				Aliases: []string{"c"},
+				Usage:   "delete all keys",
+				Action: func(cCtx *cli.Context) error {
+					database := setupDB(cCtx)
+					database.Clear()
+					return nil
+				},
+			},
 		},
 		Flags: []cli.Flag{
 			&cli.StringFlag{
