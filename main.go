@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	maxDBBytes = 1946
+	maxDBBytes = 95625
 )
 
 func main() {

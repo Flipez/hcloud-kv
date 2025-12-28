@@ -3,8 +3,14 @@ module github.com/flipez/hcloud-kv
 go 1.20
 
 require (
+<<<<<<< Updated upstream
 	github.com/hetznercloud/hcloud-go v1.52.0
 	github.com/urfave/cli/v2 v2.25.7
+=======
+	github.com/hetznercloud/hcloud-go v1.59.2
+	github.com/klauspost/compress v1.18.2
+	github.com/urfave/cli/v2 v2.27.7
+>>>>>>> Stashed changes
 )
 
 require (
