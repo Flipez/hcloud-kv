@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	maxDBBytes = 1946
+	maxDBBytes = 95625
 )
 
 func main() {
@@ -68,6 +68,26 @@ func main() {
 					database := setupDB(cCtx)
 					keys := database.List()
 					fmt.Println(strings.Join(keys, "\n"))
+					return nil
+				},
+			},
+			{
+				Name:    "delete",
+				Aliases: []string{"d"},
+				Usage:   "delete a given key",
+				Action: func(cCtx *cli.Context) error {
+					database := setupDB(cCtx)
+					database.Delete(cCtx.Args().First())
+					return nil
+				},
+			},
+			{
+				Name:    "clear",
+				Aliases: []string{"c"},
+				Usage:   "delete all keys",
+				Action: func(cCtx *cli.Context) error {
+					database := setupDB(cCtx)
+					database.Clear()
 					return nil
 				},
 			},
